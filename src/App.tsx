@@ -22,7 +22,6 @@ function App() {
       <Header />
       <main>{isLoggedIn ? <HomePage /> : <Login onLogin={handleLogin} />}
       </main>
-      <Footer />
     </div>
   );
 }
