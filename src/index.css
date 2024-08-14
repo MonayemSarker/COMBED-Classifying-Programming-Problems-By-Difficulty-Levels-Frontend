@@ -1,0 +1,31 @@
+/* Basic reset and global styles */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+header,
+footer {
+  padding: 1rem;
+  text-align: center;
+}
+
+footer {
+  margin-top: auto;
+}
+
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
