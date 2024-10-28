@@ -1,29 +1,37 @@
-import { useState } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import Header from "./components/Header/Header";
 import HomePage from "./components/HomePage/HomePage";
 import Login from "./components/Login/Login";
 import "./index.css";
 import Survey from "./components/Survey/Survey";
 import ProblemComparison from "./components/ProblemCoparison/ProblemComparison";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  const handleLogin = (username: string, password: string) => {
-    // Basic login logic (this would normally involve some API call)
-    if (username === "user" && password === "pass") {
-      setIsLoggedIn(true);
-    } else {
-      alert("Incorrect username or password");
-    }
-  };
-
   return (
     <div>
       <Header />
-      <main>{isLoggedIn ? <HomePage /> : <Login onLogin={handleLogin} />}</main>
-      {/* <Survey />  */}
-      {/* <ProblemComparison /> */}
+      <Router>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route
+            path="/home"
+            element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<Navigate to="/" />} />
+          <Route path="/survey" element={<Survey />} />
+          <Route path="/survey-comparison" element={<ProblemComparison />} />
+        </Routes>
+      </Router>
     </div>
   );
 }

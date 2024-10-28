@@ -1,16 +1,14 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-interface LoginProps {
-  onLogin: (email: string, password: string) => void;
-}
-
-function Login({ onLogin }: LoginProps) {
+function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e: any) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
@@ -27,7 +25,11 @@ function Login({ onLogin }: LoginProps) {
       }
 
       const data = await response.json();
-      console.log(data);
+      // console.log(data.tokens.accessToken);
+      const accessToken = data.tokens.accessToken;
+      localStorage.setItem("accessToken", accessToken);
+
+      navigate("/home");
     } catch (err: any) {
       setError(err.message);
     } finally {
