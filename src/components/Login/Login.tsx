@@ -1,22 +1,47 @@
 import React, { useState } from "react";
 
 interface LoginProps {
-  onLogin: (username: string, password: string) => void;
+  onLogin: (email: string, password: string) => void;
 }
 
 function Login({ onLogin }: LoginProps) {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    onLogin(username, password);
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch("http://localhost:3000/users/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email, password: password }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to login!");
+      }
+
+      const data = await response.json();
+      console.log(data);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  const handleEmailChange = (e: any) => setEmail(e.target.value);
+  const handlePasswordChange = (e: any) => setPassword(e.target.value);
 
   return (
     <div className="h-[82vh] flex justify-center items-center">
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleLogin}
         className="w-full max-w-lg mx-auto flex-col bg-white p-8 rounded-lg shadow-lg"
         style={{ minHeight: "400px" }} // Optional: Adjust height as needed
       >
@@ -25,13 +50,14 @@ function Login({ onLogin }: LoginProps) {
             htmlFor="username"
             className="block mb-2 text-sm font-medium text-gray-900"
           >
-            Username:
+            Email:
           </label>
           <input
             type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            id="email"
+            value={email}
+            onChange={handleEmailChange}
+            required
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
           />
         </div>
@@ -46,7 +72,8 @@ function Login({ onLogin }: LoginProps) {
             type="password"
             id="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handlePasswordChange}
+            required
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
           />
         </div>
@@ -55,8 +82,11 @@ function Login({ onLogin }: LoginProps) {
           type="submit"
           className="text-white bg-gradient-to-br from-green-400 to-blue-600 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-green-200 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-4 self-center"
         >
-          Login
+          {isLoading ? "Logging in..." : "Login"}
         </button>
+
+        {error && <p className="text-red-700 text-center">{error} Try Again</p>}
+
         <hr className="mt-5" />
         <p className="text-center text-gray-500 text-lg">
           Here for{" "}
