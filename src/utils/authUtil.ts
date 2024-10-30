@@ -15,3 +15,5 @@ export function isTokenExpired(exp: any) {
     const currentTime = Math.floor(Date.now() / 1000); // in seconds
     return exp < currentTime;
 }
+
+export const apiBaseUrl = `http://localhost:3000`

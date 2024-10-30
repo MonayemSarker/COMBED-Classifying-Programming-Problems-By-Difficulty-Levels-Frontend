@@ -3,7 +3,7 @@ import Sidebar from "../Sidebar/Sidebar";
 import AdminProfile from "./AdminProfile";
 import AdminManageProblems from "./AdminManageProblems";
 import AdminSurveyManagement from "./AdminSurveyManagement";
-import { decodeToken } from "../../utils/authUtil";
+import { apiBaseUrl, decodeToken } from "../../utils/authUtil";
 
 interface UserProfile {
   name: string;
@@ -25,7 +25,7 @@ export default function HomePage() {
     const fetchProfile = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`http://localhost:3000/users/${userId}`, {
+        const response = await fetch(`${apiBaseUrl}/users/${userId}`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },

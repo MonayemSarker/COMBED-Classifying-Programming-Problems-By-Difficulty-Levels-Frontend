@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { apiBaseUrl } from "../../utils/authUtil";
 
 interface Problem {
   id: string;
@@ -37,7 +38,7 @@ export default function AdminManageProblems() {
 
   const fetchProblemSets = async () => {
     try {
-      const response = await fetch("http://localhost:3000/problems/sets", {
+      const response = await fetch(`${apiBaseUrl}/problems/sets`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -60,7 +61,7 @@ export default function AdminManageProblems() {
         scoreMappings[newProblem.initial_score as keyof typeof scoreMappings],
     };
     try {
-      const response = await fetch("http://localhost:3000/problems", {
+      const response = await fetch(`${apiBaseUrl}/problems`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -85,7 +86,7 @@ export default function AdminManageProblems() {
   const handleCreateProblemSet = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/problems/set", {
+      const response = await fetch(`${apiBaseUrl}/problems/set`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -105,7 +106,7 @@ export default function AdminManageProblems() {
 
   const handleShowProblems = async () => {
     try {
-      const response = await fetch("http://localhost:3000/problems", {
+      const response = await fetch(`${apiBaseUrl}/problems`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -129,7 +130,7 @@ export default function AdminManageProblems() {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/problems/set/${selectedProblemSetId}/upload`,
+        `${apiBaseUrl}/problems/set/${selectedProblemSetId}/upload`,
         {
           method: "POST",
           headers: {

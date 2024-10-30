@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { apiBaseUrl } from "../../utils/authUtil";
 
 interface ProblemSet {
   id: string;
@@ -30,7 +31,7 @@ export default function AdminSurveyManagement() {
 
   const fetchProblemSets = async () => {
     try {
-      const response = await fetch("http://localhost:3000/problems/sets", {
+      const response = await fetch(`${apiBaseUrl}/problems/sets`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -51,7 +52,7 @@ export default function AdminSurveyManagement() {
       return;
     }
     try {
-      const response = await fetch("http://localhost:3000/surveys", {
+      const response = await fetch(`${apiBaseUrl}/surveys`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -70,7 +71,7 @@ export default function AdminSurveyManagement() {
 
   const handleShowSurveys = async () => {
     try {
-      const response = await fetch("http://localhost:3000/surveys", {
+      const response = await fetch(`${apiBaseUrl}/surveys`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -88,14 +89,11 @@ export default function AdminSurveyManagement() {
   const handleSearchSurvey = async () => {
     if (!searchTerm) return;
     try {
-      const response = await fetch(
-        `http://localhost:3000/surveys/${searchTerm}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
+      const response = await fetch(`${apiBaseUrl}surveys/${searchTerm}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setSelectedSurvey(data);

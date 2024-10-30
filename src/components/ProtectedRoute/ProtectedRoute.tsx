@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import { decodeToken, isTokenExpired } from "../../utils/authUtil";
+import { apiBaseUrl, decodeToken, isTokenExpired } from "../../utils/authUtil";
 
 function ProtectedRoute({ children }: any) {
   const [isValidUser, setIsValidUser] = useState(true);
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
-    console.log(isValidUser);
+    // console.log(isValidUser);
 
     if (!accessToken) {
       setIsValidUser(false);
@@ -25,7 +25,7 @@ function ProtectedRoute({ children }: any) {
     const validateUser = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/users/${decodedToken.sub}`,
+          `${apiBaseUrl}/users/${decodedToken.sub}`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -78,7 +78,7 @@ unction ProtectedRoute({ children }: any) {
     const validateUser = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/users/${decodedToken.sub}`,
+          `${apiBaseUrl}/users/${decodedToken.sub}`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
