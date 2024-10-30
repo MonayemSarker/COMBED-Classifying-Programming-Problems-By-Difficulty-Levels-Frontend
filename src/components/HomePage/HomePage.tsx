@@ -4,6 +4,7 @@ import AdminProfile from "./AdminProfile";
 import AdminManageProblems from "./AdminManageProblems";
 import AdminSurveyManagement from "./AdminSurveyManagement";
 import { apiBaseUrl, decodeToken } from "../../utils/authUtil";
+import AdminParticipantManagement from "./AdminParticipantManagement";
 
 interface UserProfile {
   name: string;
@@ -59,6 +60,8 @@ export default function HomePage() {
         return <AdminManageProblems />;
       case "survey-management":
         return <AdminSurveyManagement />;
+      case "participant-management":
+        return <AdminParticipantManagement />;
       default:
         return <AdminProfile />;
     }
