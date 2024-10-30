@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { apiBaseUrl } from "../../utils/authUtil";
 
 interface ProblemSet {
@@ -9,25 +9,69 @@ interface ProblemSet {
 interface Survey {
   id: string;
   name: string;
-  problemSets: ProblemSet[];
+  problemSet_ids: string[];
+  created_by: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export default function AdminSurveyManagement() {
   const accessToken = localStorage.getItem("accessToken");
   const [problemSets, setProblemSets] = useState<ProblemSet[]>([]);
-  const [surveys, setSurveys] = useState<Survey[]>([]);
-  const [showSurveys, setShowSurveys] = useState(false);
+  const [searchResults, setSearchResults] = useState<Survey[]>([]);
   const [selectedSurvey, setSelectedSurvey] = useState<Survey | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
 
   const [newSurvey, setNewSurvey] = useState({
     name: "",
     problemSet_ids: [] as string[],
   });
 
+  // Fetch problem sets on component mount
   useEffect(() => {
     fetchProblemSets();
   }, []);
+
+  // Debounced search function
+  const debouncedSearch = useCallback(
+    async (query: string) => {
+      if (!query.trim()) {
+        setSearchResults([]);
+        return;
+      }
+
+      setIsSearching(true);
+      try {
+        const response = await fetch(
+          `${apiBaseUrl}/surveys?name=${encodeURIComponent(query)}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setSearchResults(data);
+        }
+      } catch (error) {
+        console.error("Error searching surveys:", error);
+      } finally {
+        setIsSearching(false);
+      }
+    },
+    [accessToken]
+  );
+
+  // Handle search input changes with debounce
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      debouncedSearch(searchTerm);
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, debouncedSearch]);
 
   const fetchProblemSets = async () => {
     try {
@@ -69,27 +113,9 @@ export default function AdminSurveyManagement() {
     }
   };
 
-  const handleShowSurveys = async () => {
+  const handleSurveyClick = async (surveyId: string) => {
     try {
-      const response = await fetch(`${apiBaseUrl}/surveys`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setSurveys(data);
-        setShowSurveys(true);
-      }
-    } catch (error) {
-      console.error("Error fetching surveys:", error);
-    }
-  };
-
-  const handleSearchSurvey = async () => {
-    if (!searchTerm) return;
-    try {
-      const response = await fetch(`${apiBaseUrl}surveys/${searchTerm}`, {
+      const response = await fetch(`${apiBaseUrl}/surveys/${surveyId}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -116,21 +142,50 @@ export default function AdminSurveyManagement() {
     <div className="container mx-auto p-4">
       <h2 className="text-2xl font-bold mb-4">Survey Management</h2>
 
-      {/* Search Survey */}
-      <div className="mb-8 flex justify-center">
-        <input
-          className="shadow appearance-none border rounded w-64 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mr-2"
-          type="text"
-          placeholder="Search survey by name or ID"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <button
-          className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          onClick={handleSearchSurvey}
-        >
-          Search
-        </button>
+      {/* Real-time Search */}
+      <div className="mb-8">
+        <div className="max-w-xl mx-auto">
+          <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            type="text"
+            placeholder="Search surveys by name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+
+          {/* Search Results */}
+          {searchTerm && (
+            <div className="mt-2 bg-white rounded-lg shadow-lg">
+              {isSearching ? (
+                <div className="p-4 text-center text-gray-500">
+                  Searching...
+                </div>
+              ) : searchResults.length > 0 ? (
+                <ul className="divide-y divide-gray-200">
+                  {searchResults.map((survey) => (
+                    <li
+                      key={survey.id}
+                      onClick={() => handleSurveyClick(survey.id)}
+                      className="p-4 hover:bg-gray-50 cursor-pointer transition-colors duration-150"
+                    >
+                      <h4 className="font-medium text-gray-900">
+                        {survey.name}
+                      </h4>
+                      <p className="text-sm text-gray-500">
+                        Created:{" "}
+                        {new Date(survey.createdAt).toLocaleDateString()}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className="p-4 text-center text-gray-500">
+                  No such survey available
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Create Survey Form */}
@@ -184,76 +239,47 @@ export default function AdminSurveyManagement() {
         </form>
       </div>
 
-      {/* Show All Surveys Button */}
-      <button
-        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
-        onClick={handleShowSurveys}
-      >
-        Show All Surveys
-      </button>
-
-      {/* Surveys List Modal */}
-      {showSurveys && (
-        <div
-          className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
-          id="surveys-modal"
-        >
-          <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/5 shadow-lg rounded-md bg-white">
-            <div className="mt-3 text-center">
-              <h3 className="text-lg leading-6 font-medium text-gray-900">
-                All Surveys
-              </h3>
-              <div className="mt-2 px-7 py-3">
-                <ul className="space-y-4">
-                  {surveys.map((survey) => (
-                    <li key={survey.id} className="text-left border-b pb-4">
-                      <h4 className="font-bold">{survey.name}</h4>
-                      <p className="mt-2">
-                        Problem Sets:{" "}
-                        {survey.problemSets.map((set) => set.name).join(", ")}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-            <div className="items-center px-4 py-3">
-              <button
-                className="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                onClick={() => setShowSurveys(false)}
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Survey Details Modal */}
       {selectedSurvey && (
-        <div
-          className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
-          id="survey-details-modal"
-        >
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
           <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/5 shadow-lg rounded-md bg-white">
-            <div className="mt-3 text-center">
-              <h3 className="text-lg leading-6 font-medium text-gray-900">
+            <div className="mt-3">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
                 Survey Details
               </h3>
-              <div className="mt-2 px-7 py-3 text-left">
-                <h4 className="font-bold">{selectedSurvey.name}</h4>
-                <p className="mt-2">ID: {selectedSurvey.id}</p>
-                <p className="mt-2">Problem Sets:</p>
-                <ul className="list-disc list-inside">
-                  {selectedSurvey.problemSets.map((set) => (
-                    <li key={set.id}>{set.name}</li>
-                  ))}
-                </ul>
+              <div className="mt-2 space-y-4">
+                <div>
+                  <h4 className="font-bold text-lg">{selectedSurvey.name}</h4>
+                  <p className="text-sm text-gray-500">
+                    ID: {selectedSurvey.id}
+                  </p>
+                </div>
+                <div>
+                  <p className="font-medium">Problem Set IDs:</p>
+                  <ul className="list-disc list-inside">
+                    {selectedSurvey.problemSet_ids.map((id) => (
+                      <li key={id} className="text-sm text-gray-600">
+                        {id}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="text-sm text-gray-600">
+                  <p>Created by: {selectedSurvey.created_by}</p>
+                  <p>
+                    Created:{" "}
+                    {new Date(selectedSurvey.createdAt).toLocaleString()}
+                  </p>
+                  <p>
+                    Updated:{" "}
+                    {new Date(selectedSurvey.updatedAt).toLocaleString()}
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="items-center px-4 py-3">
+            <div className="mt-5">
               <button
-                className="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                className="w-full px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
                 onClick={() => setSelectedSurvey(null)}
               >
                 Close
