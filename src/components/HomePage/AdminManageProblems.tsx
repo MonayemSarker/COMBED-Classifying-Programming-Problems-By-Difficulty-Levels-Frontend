@@ -37,7 +37,7 @@ export default function AdminManageProblems() {
 
   const fetchProblemSets = async () => {
     try {
-      const response = await fetch("http://localhost:3000/problems/set", {
+      const response = await fetch("http://localhost:3000/problems/sets", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -153,7 +153,7 @@ export default function AdminManageProblems() {
       <h1 className="text-2xl font-bold mb-4">Manage Problems</h1>
 
       {/* Create Problem Form */}
-      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+      <div className="bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4">
         <h2 className="text-xl font-semibold mb-4">Create a New Problem</h2>
         <form onSubmit={handleCreateProblem}>
           <div className="mb-4">
@@ -243,7 +243,7 @@ export default function AdminManageProblems() {
       </div>
 
       {/* Create Problem Set Form */}
-      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+      <div className="bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4">
         <h2 className="text-xl font-semibold mb-4">Create A Problem Set</h2>
         <form onSubmit={handleCreateProblemSet}>
           <div className="mb-4">
@@ -274,7 +274,7 @@ export default function AdminManageProblems() {
       </div>
 
       {/* CSV Upload Form */}
-      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+      <div className="bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4">
         <h2 className="text-xl font-semibold mb-4">
           Upload CSV for Problem Set
         </h2>
