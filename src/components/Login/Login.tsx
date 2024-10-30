@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { apiBaseUrl } from "../../utils/authUtil";
 
 function Login() {
@@ -93,9 +93,9 @@ function Login() {
         <hr className="mt-5" />
         <p className="text-center text-gray-500 text-lg">
           Here for{" "}
-          <a href="#" className="text-blue-500 hover:underline">
+          <Link to="/survey" className="text-blue-500 hover:underline">
             Survey
-          </a>
+          </Link>
           ?
         </p>
       </form>
