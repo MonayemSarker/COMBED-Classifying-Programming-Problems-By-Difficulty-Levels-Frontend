@@ -123,6 +123,11 @@ export default function AdminSurveyManagement() {
       if (response.ok) {
         const data = await response.json();
         setSelectedSurvey(data);
+        // data.problemSet_ids.forEach((id: string) => {
+        //   if (!problemSets[id]) {
+        //     fetchProblemSetDetails(id);
+        //   }
+        // });
       }
     } catch (error) {
       console.error("Error fetching survey details:", error);
@@ -137,6 +142,25 @@ export default function AdminSurveyManagement() {
       return { ...prev, problemSet_ids: updatedIds };
     });
   };
+
+  // const fetchProblemSetDetails = async (id: string) => {
+  //   try {
+  //     const response = await fetch(`${apiBaseUrl}/problems/sets/${id}`, {
+  //       headers: {
+  //         Authorization: `Bearer ${accessToken}`,
+  //       },
+  //     });
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       setProblemSets((prev) => ({
+  //         ...prev,
+  //         [id]: data,
+  //       }));
+  //     }
+  //   } catch (error) {
+  //     console.error(`Error fetching problem set details for ${id}:`, error);
+  //   }
+  // };
 
   return (
     <div className="container mx-auto p-4">

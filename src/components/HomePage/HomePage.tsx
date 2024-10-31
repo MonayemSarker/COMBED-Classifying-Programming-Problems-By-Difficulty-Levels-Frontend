@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
 import AdminProfile from "./AdminProfile";
 import AdminManageProblems from "./AdminManageProblems";
@@ -21,6 +22,7 @@ export default function HomePage() {
   const accessToken = localStorage.getItem("accessToken");
   const decoded = decodeToken(accessToken);
   const userId = decoded?.sub;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -37,8 +39,6 @@ export default function HomePage() {
         }
 
         const data = await response.json();
-        // console.log("data", data);
-
         setProfile(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
@@ -67,6 +67,11 @@ export default function HomePage() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    navigate("/login");
+  };
+
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar
@@ -74,9 +79,18 @@ export default function HomePage() {
         onSectionChange={setActiveSection}
       />
       <div className="flex-1 p-10 overflow-auto">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">
-          Welcome, {profile?.name}!
-        </h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-gray-800">
+            Welcome, {profile?.name}!
+          </h1>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+            aria-label="Logout"
+          >
+            Logout
+          </button>
+        </div>
         {renderActiveComponent()}
       </div>
     </div>
