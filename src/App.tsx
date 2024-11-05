@@ -11,6 +11,7 @@ import "./index.css";
 import Survey from "./components/Survey/Survey";
 import ProblemComparison from "./components/ProblemCoparison/ProblemComparison";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import LandingPage from "./components/LandingPage/LandingPage";
 
 function App() {
   return (
@@ -18,7 +19,8 @@ function App() {
       <Header />
       <Router>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<Login />} />
           <Route
             path="/home"
             element={
