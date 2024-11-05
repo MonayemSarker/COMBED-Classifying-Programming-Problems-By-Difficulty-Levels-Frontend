@@ -2,6 +2,15 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiBaseUrl } from "../../utils/authUtil";
 
+interface ProblemPair {
+  id: string;
+  surveyParticipants_id: string;
+  problem_1_id: string;
+  problem_2_id: string;
+  difficult_problem_id: string | null;
+  createdAt: string;
+}
+
 function Survey() {
   const [formData, setFormData] = useState({
     surveyKey: "",
@@ -32,8 +41,11 @@ function Survey() {
         throw new Error("Invalid survey key or email");
       }
 
+      const problemPairs: ProblemPair[] = await response.json();
+
       // If validation is successful, navigate to problem comparison
-      navigate("/problem-comparison");
+      navigate("/survey-comparison", { state: { problemPairs } });
+      // console.log(problemPairs);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
