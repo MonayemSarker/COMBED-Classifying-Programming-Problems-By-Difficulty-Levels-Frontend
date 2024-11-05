@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { apiBaseUrl } from "../../utils/authUtil";
 
 function Login() {
@@ -91,13 +91,6 @@ function Login() {
         {error && <p className="text-red-700 text-center">{error} Try Again</p>}
 
         <hr className="mt-5" />
-        <p className="text-center text-gray-500 text-lg">
-          Here for{" "}
-          <Link to="/survey" className="text-blue-500 hover:underline">
-            Survey
-          </Link>
-          ?
-        </p>
       </form>
     </div>
   );

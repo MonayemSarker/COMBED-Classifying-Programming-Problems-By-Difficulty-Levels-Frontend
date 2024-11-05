@@ -7,7 +7,7 @@ export default function Header() {
         <nav className="flex items-center justify-center h-16">
           <div className="text-center">
             <span className="text-3xl font-serif text-gray-800 tracking-tight">
-              COMBED
+              SurveyClass
             </span>
           </div>
         </nav>

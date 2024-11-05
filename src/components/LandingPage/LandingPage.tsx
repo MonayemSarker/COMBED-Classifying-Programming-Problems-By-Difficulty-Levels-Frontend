@@ -1,5 +1,5 @@
 import { ArrowRightIcon, UserIcon } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -18,14 +18,17 @@ export default function LandingPage() {
           </div>
           <div className="container mx-auto px-4 text-center relative z-10">
             <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 mb-6 animate-fade-in-down">
-              Welcome to Our Amazing Platform
+              Welcome to SurveyClass
             </h1>
             <p className="text-xl md:text-2xl text-gray-700 mb-12 max-w-3xl mx-auto animate-fade-in-up">
-              Discover a new way to streamline your workflow, boost
-              productivity, and achieve your goals with our innovative solution.
+              A platform designed for pairwise comparison of Python programming
+              problems. Easily rank and classify problems by difficulty through
+              interactive surveys, making learning paths more effective for
+              educators and students alike. Dive into a smarter way to assess
+              Python problem difficulty!
             </p>
             <button className="bg-blue-600 text-white px-10 py-4 rounded-full text-lg font-semibold hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 flex items-center mx-auto shadow-lg">
-              Get Started
+              <Link to="/survey">Start Survey</Link>
               <ArrowRightIcon className="ml-2 h-6 w-6" />
             </button>
           </div>
@@ -40,10 +43,14 @@ export default function LandingPage() {
             <div className="flex flex-col md:flex-row items-center justify-between">
               <div className="md:w-1/2 mb-8 md:mb-0">
                 <p className="text-xl text-gray-600 leading-relaxed">
-                  We are a team of passionate individuals dedicated to creating
-                  innovative solutions that make a difference. Our mission is to
-                  empower businesses and individuals with cutting-edge
-                  technology to achieve their full potential.
+                  At SurveyClass, we’re dedicated to enhancing programming
+                  education through a survey-based system that ranks Python
+                  problems by standard difficulty levels. Our platform empowers
+                  educators and learners to identify and organize challenges
+                  efficiently, creating a clear and structured path for skill
+                  development. With a passion for innovation, we’re committed to
+                  building tools that simplify and elevate the coding
+                  experience.
                 </p>
               </div>
               <div className="md:w-1/2 flex justify-center">
