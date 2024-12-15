@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { apiBaseUrl } from "../../utils/authUtil";
+import { InformationCircleIcon } from "@heroicons/react/24/solid";
 
 interface Participant {
   id: string;
@@ -15,6 +16,7 @@ export default function AdminParticipantManagement() {
   const [showParticipants, setShowParticipants] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const accessToken = localStorage.getItem("accessToken");
+  const [showInfo, setShowInfo] = useState<string | null>(null);
 
   const [newParticipant, setNewParticipant] = useState({
     email: "",
@@ -91,6 +93,92 @@ export default function AdminParticipantManagement() {
     }
   };
 
+  const InfoPopup = ({
+    show,
+    onClose,
+    title,
+    content,
+  }: {
+    show: boolean;
+    onClose: () => void;
+    title: string;
+    content: string;
+  }) => {
+    if (!show) return null;
+
+    return (
+      <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+          <div className="mt-3 text-center">
+            <h3 className="text-lg leading-6 font-medium text-gray-900">
+              {title}
+            </h3>
+            <div className="mt-2 px-7 py-3">
+              <p className="text-sm text-gray-500">{content}</p>
+            </div>
+            <div className="items-center px-4 py-3">
+              <button
+                className="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                onClick={onClose}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const InputWithInfo = ({
+    label,
+    id,
+    type,
+    value,
+    onChange,
+    info,
+  }: {
+    label: string;
+    id: string;
+    type: string;
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    info: string;
+  }) => (
+    <div className="mb-4">
+      <label
+        className="block text-gray-700 text-sm font-bold mb-2"
+        htmlFor={id}
+      >
+        {label}
+      </label>
+      <div className="flex items-center">
+        <input
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id={id}
+          type={type}
+          value={value}
+          onChange={onChange}
+          required
+        />
+        <button
+          type="button"
+          onClick={() => setShowInfo(id)}
+          className="ml-2 text-gray-500 hover:text-gray-700"
+          aria-label={`Information about ${label}`}
+        >
+          <InformationCircleIcon className="h-5 w-5" />
+        </button>
+      </div>
+      <InfoPopup
+        show={showInfo === id}
+        onClose={() => setShowInfo(null)}
+        title={`${label} Information`}
+        content={info}
+      />
+    </div>
+  );
+
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-2xl font-bold mb-4">Participant Management</h2>
@@ -100,108 +188,65 @@ export default function AdminParticipantManagement() {
         <h3 className="text-xl font-semibold mb-4">Create New Participant</h3>
         <form onSubmit={handleCreateParticipant}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="email"
-              >
-                Email
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="email"
-                type="email"
-                value={newParticipant.email}
-                onChange={(e) =>
-                  setNewParticipant({
-                    ...newParticipant,
-                    email: e.target.value,
-                  })
-                }
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="name"
-              >
-                Name
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="name"
-                type="text"
-                value={newParticipant.name}
-                onChange={(e) =>
-                  setNewParticipant({ ...newParticipant, name: e.target.value })
-                }
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="designation"
-              >
-                Designation
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="designation"
-                type="text"
-                value={newParticipant.designation}
-                onChange={(e) =>
-                  setNewParticipant({
-                    ...newParticipant,
-                    designation: e.target.value,
-                  })
-                }
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="location"
-              >
-                Location
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="location"
-                type="text"
-                value={newParticipant.location}
-                onChange={(e) =>
-                  setNewParticipant({
-                    ...newParticipant,
-                    location: e.target.value,
-                  })
-                }
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="institution"
-              >
-                Institution
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="institution"
-                type="text"
-                value={newParticipant.institution}
-                onChange={(e) =>
-                  setNewParticipant({
-                    ...newParticipant,
-                    institution: e.target.value,
-                  })
-                }
-                required
-              />
-            </div>
+            <InputWithInfo
+              label="Email"
+              id="email"
+              type="email"
+              value={newParticipant.email}
+              onChange={(e) =>
+                setNewParticipant({ ...newParticipant, email: e.target.value })
+              }
+              info="Enter the participant's email address. This will be used for communication and login purposes."
+            />
+            <InputWithInfo
+              label="Name"
+              id="name"
+              type="text"
+              value={newParticipant.name}
+              onChange={(e) =>
+                setNewParticipant({ ...newParticipant, name: e.target.value })
+              }
+              info="Enter the full name of the participant."
+            />
+            <InputWithInfo
+              label="Designation"
+              id="designation"
+              type="text"
+              value={newParticipant.designation}
+              onChange={(e) =>
+                setNewParticipant({
+                  ...newParticipant,
+                  designation: e.target.value,
+                })
+              }
+              info="Enter the participant's job title or role."
+            />
+            <InputWithInfo
+              label="Location"
+              id="location"
+              type="text"
+              value={newParticipant.location}
+              onChange={(e) =>
+                setNewParticipant({
+                  ...newParticipant,
+                  location: e.target.value,
+                })
+              }
+              info="Enter the participant's location (e.g., city, country)."
+            />
+            <InputWithInfo
+              label="Institution"
+              id="institution"
+              type="text"
+              value={newParticipant.institution}
+              onChange={(e) =>
+                setNewParticipant({
+                  ...newParticipant,
+                  institution: e.target.value,
+                })
+              }
+              info="Enter the name of the institution or organization the participant is affiliated with."
+            />
           </div>
           <button
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -223,15 +268,31 @@ export default function AdminParticipantManagement() {
             >
               CSV File
             </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="csvFile"
-              type="file"
-              accept=".csv"
-              onChange={(e) =>
-                setSelectedFile(e.target.files ? e.target.files[0] : null)
-              }
-              required
+            <div className="flex items-center">
+              <input
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="csvFile"
+                type="file"
+                accept=".csv"
+                onChange={(e) =>
+                  setSelectedFile(e.target.files ? e.target.files[0] : null)
+                }
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowInfo("csvFile")}
+                className="ml-2 text-gray-500 hover:text-gray-700"
+                aria-label="Information about CSV file upload"
+              >
+                <InformationCircleIcon className="h-5 w-5" />
+              </button>
+            </div>
+            <InfoPopup
+              show={showInfo === "csvFile"}
+              onClose={() => setShowInfo(null)}
+              title="CSV File Upload Information"
+              content="Upload a CSV file containing participant information. The file should have columns for email, name, designation, location, and institution."
             />
           </div>
           <button

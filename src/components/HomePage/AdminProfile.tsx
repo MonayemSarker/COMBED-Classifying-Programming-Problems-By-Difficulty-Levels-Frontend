@@ -22,32 +22,34 @@ export default function AdminProfile({ isLoading, profile, error }: any) {
   }
 
   return (
-    <div className="bg-white shadow-lg rounded-lg p-6">
+    <div className="container mx-auto p-4">
       <h2 className="text-2xl font-bold mb-4">Profile</h2>
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-600">
-            Name
-          </label>
-          <p className="mt-1 text-gray-900">{profile?.name}</p>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-600">
-            User Name
-          </label>
-          <p className="mt-1 text-gray-900">{profile?.username}</p>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-600">
-            Email
-          </label>
-          <p className="mt-1 text-gray-900">{profile?.email}</p>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-600">
-            Role
-          </label>
-          <p className="mt-1 text-gray-900">Administrator</p>
+      <div className="bg-white shadow-lg rounded-lg p-6">
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-600">
+              Name
+            </label>
+            <p className="mt-1 text-gray-900">{profile?.name}</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-600">
+              User Name
+            </label>
+            <p className="mt-1 text-gray-900">{profile?.username}</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-600">
+              Email
+            </label>
+            <p className="mt-1 text-gray-900">{profile?.email}</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-600">
+              Role
+            </label>
+            <p className="mt-1 text-gray-900">Administrator</p>
+          </div>
         </div>
       </div>
     </div>
