@@ -46,7 +46,7 @@ function Login() {
       <form
         onSubmit={handleLogin}
         className="w-full max-w-lg mx-auto flex-col bg-white p-8 rounded-lg shadow-lg"
-        style={{ minHeight: "400px" }} // Optional: Adjust height as needed
+        style={{ minHeight: "220px" }} // Optional: Adjust height as needed
       >
         <div className="mb-5">
           <label
@@ -81,6 +81,8 @@ function Login() {
           />
         </div>
 
+        <hr className="mt-5 mb-5" />
+
         <button
           type="submit"
           className="text-white bg-gradient-to-br from-green-400 to-blue-600 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-green-200 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-4 self-center"
@@ -89,8 +91,6 @@ function Login() {
         </button>
 
         {error && <p className="text-red-700 text-center">{error} Try Again</p>}
-
-        <hr className="mt-5" />
       </form>
     </div>
   );
