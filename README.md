@@ -23,27 +23,11 @@ This repository contains the **frontend code** for the platform.
 
 ---
 
-### **Screenshots**
-
-#### **Home Page**
-This is the home page where participants can start the survey and admins can log in.
-
-![Home Page](./C0A1BB62-2444-4931-B19E-C20759FFC1FA.jpeg)
-
----
-
-#### **Survey Login**
-Users enter their survey invitation key and email address to participate.
-
-![Survey Login](./91BE556A-2DAA-41B1-BB1A-F28F4041058E.jpeg)
-
----
-
 ### **Getting Started**
 
 Follow these steps to set up and run the project:
 
-#### **1. Prerequisites**
+#### **Prerequisites**
 Ensure you have the following installed:
 - **Node.js** (v16+)
-- **npm** or **yarn**
+- **npm**
