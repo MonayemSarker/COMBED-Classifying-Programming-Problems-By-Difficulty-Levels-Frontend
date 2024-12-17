@@ -1,30 +1,49 @@
-# React + TypeScript + Vite
+# **SurveyClass - Pairwise Survey Tool**
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### **Overview**
+SurveyClass is an interactive survey tool designed for pairwise comparison of Python programming problems. The platform allows users to rank and classify problems by difficulty levels effectively through surveys.
 
-Currently, two official plugins are available:
+This repository contains the **frontend code** for the platform.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+### **Key Features**
+1. **Interactive Surveys**: A streamlined survey experience to compare and rank problems.
+2. **Admin Portal**: A secure login area for admins to manage surveys and participants.
+3. **User-Friendly Interface**: Intuitive UI built for educators and learners alike.
+4. **Survey Invitation Key**: Participants can securely access surveys with a key.
+5. **Modern Design**: Styled with **Tailwind CSS** for a clean and responsive UI.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+---
 
-- Configure the top-level `parserOptions` property like this:
+### **Tech Stack**
+- **React.js**: Component-based UI development.
+- **TypeScript**: For type-safe frontend development.
+- **Tailwind CSS**: Utility-first CSS framework for modern designs.
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+---
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+### **Screenshots**
+
+#### **Home Page**
+This is the home page where participants can start the survey and admins can log in.
+
+![Home Page](./C0A1BB62-2444-4931-B19E-C20759FFC1FA.jpeg)
+
+---
+
+#### **Survey Login**
+Users enter their survey invitation key and email address to participate.
+
+![Survey Login](./91BE556A-2DAA-41B1-BB1A-F28F4041058E.jpeg)
+
+---
+
+### **Getting Started**
+
+Follow these steps to set up and run the project:
+
+#### **1. Prerequisites**
+Ensure you have the following installed:
+- **Node.js** (v16+)
+- **npm** or **yarn**
