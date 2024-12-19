@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { apiBaseUrl } from "../../utils/authUtil";
+import { InformationCircleIcon } from "@heroicons/react/24/solid";
 
 interface ProblemSet {
   id: string;
@@ -22,6 +23,9 @@ export default function AdminSurveyManagement() {
   const [selectedSurvey, setSelectedSurvey] = useState<Survey | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearching, setIsSearching] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
+  const [showSurveyNameInfo, setShowSurveyNameInfo] = useState(false);
+  const [isLoadingDetails, setIsLoadingDetails] = useState(false);
 
   const [newSurvey, setNewSurvey] = useState({
     name: "",
@@ -49,7 +53,7 @@ export default function AdminSurveyManagement() {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
-          }
+          },
         );
         if (response.ok) {
           const data = await response.json();
@@ -61,7 +65,7 @@ export default function AdminSurveyManagement() {
         setIsSearching(false);
       }
     },
-    [accessToken]
+    [accessToken],
   );
 
   // Handle search input changes with debounce
@@ -161,6 +165,40 @@ export default function AdminSurveyManagement() {
   //     console.error(`Error fetching problem set details for ${id}:`, error);
   //   }
   // };
+  //
+  const InfoPopup = ({
+    show,
+    onClose,
+    content,
+  }: {
+    show: boolean;
+    onClose: () => void;
+    content: string;
+  }) => {
+    if (!show) return null;
+    return (
+      <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+          <div className="mt-3 text-center">
+            <h3 className="text-lg leading-6 font-medium text-gray-900">
+              Survey Name Information
+            </h3>
+            <div className="mt-2 px-7 py-3">
+              <p className="text-sm text-gray-500">{content}</p>
+            </div>
+            <div className="items-center px-4 py-3">
+              <button
+                onClick={onClose}
+                className="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -223,16 +261,26 @@ export default function AdminSurveyManagement() {
             >
               Survey Name
             </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="surveyName"
-              type="text"
-              value={newSurvey.name}
-              onChange={(e) =>
-                setNewSurvey({ ...newSurvey, name: e.target.value })
-              }
-              required
-            />
+            <div className="flex items-center">
+              <input
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="surveyName"
+                type="text"
+                value={newSurvey.name}
+                onChange={(e) =>
+                  setNewSurvey({ ...newSurvey, name: e.target.value })
+                }
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowSurveyNameInfo(true)}
+                className="ml-2 text-gray-500 hover:text-gray-700"
+                aria-label="Information about Survey Name"
+              >
+                <InformationCircleIcon className="h-5 w-5" />
+              </button>
+            </div>
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -267,51 +315,74 @@ export default function AdminSurveyManagement() {
       {selectedSurvey && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
           <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/5 shadow-lg rounded-md bg-white">
-            <div className="mt-3">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Survey Details
-              </h3>
-              <div className="mt-2 space-y-4">
-                <div>
-                  <h4 className="font-bold text-lg">{selectedSurvey.name}</h4>
-                  <p className="text-sm text-gray-500">
-                    ID: {selectedSurvey.id}
-                  </p>
+            {isLoadingDetails ? (
+              <div className="flex items-center justify-center p-8">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+              </div>
+            ) : (
+              <div className="mt-3">
+                <div className="flex justify-between items-start">
+                  <h3 className="text-xl font-bold text-gray-900">
+                    {selectedSurvey.name}
+                  </h3>
+                  <button
+                    onClick={() => setSelectedSurvey(null)}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
                 </div>
-                <div>
-                  <p className="font-medium">Problem Set IDs:</p>
-                  <ul className="list-disc list-inside">
-                    {selectedSurvey.problemSet_ids.map((id) => (
-                      <li key={id} className="text-sm text-gray-600">
-                        {id}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="text-sm text-gray-600">
-                  <p>Created by: {selectedSurvey.created_by}</p>
-                  <p>
-                    Created:{" "}
-                    {new Date(selectedSurvey.createdAt).toLocaleString()}
-                  </p>
-                  <p>
-                    Updated:{" "}
-                    {new Date(selectedSurvey.updatedAt).toLocaleString()}
-                  </p>
+                <div className="mt-4 space-y-4">
+                  <div>
+                    <h4 className="font-medium text-gray-700 mb-2">
+                      Problem Sets:
+                    </h4>
+                    <ul className="space-y-2">
+                      {selectedSurvey.problemSet_ids.map((id) => (
+                        <li key={id} className="text-sm text-gray-600">
+                          {id}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="pt-4 border-t border-gray-200">
+                    <p className="text-sm text-gray-600">
+                      Created:{" "}
+                      {new Date(selectedSurvey.createdAt).toLocaleString()}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      Last Updated:{" "}
+                      {new Date(selectedSurvey.updatedAt).toLocaleString()}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="mt-5">
-              <button
-                className="w-full px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                onClick={() => setSelectedSurvey(null)}
-              >
-                Close
-              </button>
-            </div>
+            )}
           </div>
         </div>
       )}
+      <InfoPopup
+        show={showInfo}
+        onClose={() => setShowInfo(false)}
+        content="To create a new survey, please provide a survey name and select at least one problem set. The selected problem sets will determine the problems included in your survey."
+      />
+      <InfoPopup
+        show={showSurveyNameInfo}
+        onClose={() => setShowSurveyNameInfo(false)}
+        content="Please provide a descriptive name for your survey. After entering the survey name, select at least one problem set from the options below to include in your survey."
+      />
     </div>
   );
 }
