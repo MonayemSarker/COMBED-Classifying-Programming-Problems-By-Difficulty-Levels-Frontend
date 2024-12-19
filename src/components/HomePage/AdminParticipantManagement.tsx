@@ -102,7 +102,7 @@ export default function AdminParticipantManagement() {
     show: boolean;
     onClose: () => void;
     title: string;
-    content: string;
+    content: string | JSX.Element;
   }) => {
     if (!show) return null;
 
@@ -113,13 +113,11 @@ export default function AdminParticipantManagement() {
             <h3 className="text-lg leading-6 font-medium text-gray-900">
               {title}
             </h3>
-            <div className="mt-2 px-7 py-3">
-              <p className="text-sm text-gray-500">{content}</p>
-            </div>
+            <div className="mt-2 px-7 py-3">{content}</div>
             <div className="items-center px-4 py-3">
               <button
-                className="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
                 onClick={onClose}
+                className="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
               >
                 Close
               </button>
@@ -292,7 +290,40 @@ export default function AdminParticipantManagement() {
               show={showInfo === "csvFile"}
               onClose={() => setShowInfo(null)}
               title="CSV File Upload Information"
-              content="Upload a CSV file containing participant information. The file should have columns for email, name, designation, location, and institution."
+              content={
+                <div>
+                  <p>
+                    Upload a CSV file containing participant information. The
+                    file should have columns for email, name, designation,
+                    location, and institution.
+                  </p>
+                  <button
+                    onClick={() => {
+                      const csvContent =
+                        "email,name,designation,location,institution\n";
+                      const blob = new Blob([csvContent], {
+                        type: "text/csv;charset=utf-8;",
+                      });
+                      const link = document.createElement("a");
+                      if (link.download !== undefined) {
+                        const url = URL.createObjectURL(blob);
+                        link.setAttribute("href", url);
+                        link.setAttribute(
+                          "download",
+                          "participant_template.csv",
+                        );
+                        link.style.visibility = "hidden";
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                      }
+                    }}
+                    className="mt-2 text-blue-600 hover:text-blue-800"
+                  >
+                    Download CSV template
+                  </button>
+                </div>
+              }
             />
           </div>
           <button
