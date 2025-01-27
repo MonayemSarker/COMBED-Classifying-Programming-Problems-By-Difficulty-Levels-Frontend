@@ -1,4 +1,4 @@
-import { ArrowRightIcon, UserIcon } from "lucide-react";
+import { ArrowRightIcon, UserIcon, CheckCircleIcon } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function LandingPage() {
@@ -35,7 +35,24 @@ export default function LandingPage() {
           <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white to-transparent"></div>
         </section>
 
-        <section id="about" className="py-24 bg-white">
+        <section className="py-24 bg-gray-50 relative overflow-hidden">
+          <div className="container mx-auto px-4 text-center relative z-10">
+            <h2 className="text-4xl font-bold text-gray-800 mb-8">
+              Check Problem Difficulty
+            </h2>
+            <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto">
+              Curious about the difficulty of a specific Python problem? Use our
+              problem classifier to get an instant assessment.
+            </p>
+            <button className="bg-green-500 text-white px-10 py-4 rounded-full text-lg font-semibold hover:bg-green-600 transition-all duration-300 transform hover:scale-105 flex items-center mx-auto shadow-lg">
+              <Link to="/problem-classifier">Check Difficulty</Link>
+              <CheckCircleIcon className="ml-2 h-6 w-6" />
+            </button>
+          </div>
+          {/* <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white to-transparent"></div> */}
+        </section>
+
+        <section id="about" className="py-24 bg-gray-50">
           <div className="container mx-auto px-4">
             <h2 className="text-4xl font-bold text-center text-gray-800 mb-12">
               About Us
@@ -43,12 +60,12 @@ export default function LandingPage() {
             <div className="flex flex-col md:flex-row items-center justify-between">
               <div className="md:w-1/2 mb-8 md:mb-0">
                 <p className="text-xl text-gray-600 leading-relaxed">
-                  At SurveyClass, we’re dedicated to enhancing programming
+                  At SurveyClass, we're dedicated to enhancing programming
                   education through a survey-based system that ranks Python
                   problems by standard difficulty levels. Our platform empowers
                   educators and learners to identify and organize challenges
                   efficiently, creating a clear and structured path for skill
-                  development. With a passion for innovation, we’re committed to
+                  development. With a passion for innovation, we're committed to
                   building tools that simplify and elevate the coding
                   experience.
                 </p>

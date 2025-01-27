@@ -12,6 +12,7 @@ import Survey from "./components/Survey/Survey";
 import ProblemComparison from "./components/ProblemCoparison/ProblemComparison";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import LandingPage from "./components/LandingPage/LandingPage";
+import ProblemClassifierPage from "./components/ProblemClassifier/ProblemClassifierPage";
 
 function App() {
   return (
@@ -32,6 +33,10 @@ function App() {
           <Route path="*" element={<Navigate to="/" />} />
           <Route path="/survey" element={<Survey />} />
           <Route path="/survey-comparison" element={<ProblemComparison />} />
+          <Route
+            path="/problem-classifier"
+            element={<ProblemClassifierPage />}
+          />
         </Routes>
       </Router>
     </div>
