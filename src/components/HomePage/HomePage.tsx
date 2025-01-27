@@ -4,8 +4,9 @@ import Sidebar from "../Sidebar/Sidebar";
 import AdminProfile from "./AdminProfile";
 import AdminManageProblems from "./AdminManageProblems";
 import AdminSurveyManagement from "./AdminSurveyManagement";
-import { apiBaseUrl, decodeToken } from "../../utils/authUtil";
 import AdminParticipantManagement from "./AdminParticipantManagement";
+import AdminAdvanceOptions from "./AdminAdvanceOptions";
+import { apiBaseUrl, decodeToken } from "../../utils/authUtil";
 
 interface UserProfile {
   name: string;
@@ -62,6 +63,8 @@ export default function HomePage() {
         return <AdminSurveyManagement />;
       case "participant-management":
         return <AdminParticipantManagement />;
+      case "advance-options":
+        return <AdminAdvanceOptions />;
       default:
         return <AdminProfile />;
     }
