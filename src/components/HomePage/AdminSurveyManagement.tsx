@@ -1,6 +1,14 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { apiBaseUrl } from "../../utils/authUtil";
 import { InformationCircleIcon } from "@heroicons/react/24/solid";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Legend,
+  Tooltip,
+} from "recharts";
 
 interface ProblemSet {
   id: string;
@@ -16,11 +24,23 @@ interface Survey {
   updatedAt: string;
 }
 
+interface SurveyStats {
+  problemSetNames: string[];
+  participantStats: {
+    notStarted: number;
+    inProgress: number;
+    finished: number;
+    participantsCount: number;
+  };
+}
+
 export default function AdminSurveyManagement() {
   const accessToken = localStorage.getItem("accessToken");
   const [problemSets, setProblemSets] = useState<ProblemSet[]>([]);
   const [searchResults, setSearchResults] = useState<Survey[]>([]);
-  const [selectedSurvey, setSelectedSurvey] = useState<Survey | null>(null);
+  const [selectedSurvey, setSelectedSurvey] = useState<SurveyStats | null>(
+    null,
+  );
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
@@ -32,12 +52,10 @@ export default function AdminSurveyManagement() {
     problemSet_ids: [] as string[],
   });
 
-  // Fetch problem sets on component mount
   useEffect(() => {
     fetchProblemSets();
   }, []);
 
-  // Debounced search function
   const debouncedSearch = useCallback(
     async (query: string) => {
       if (!query.trim()) {
@@ -68,7 +86,6 @@ export default function AdminSurveyManagement() {
     [accessToken],
   );
 
-  // Handle search input changes with debounce
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       debouncedSearch(searchTerm);
@@ -118,23 +135,21 @@ export default function AdminSurveyManagement() {
   };
 
   const handleSurveyClick = async (surveyId: string) => {
+    setIsLoadingDetails(true);
     try {
-      const response = await fetch(`${apiBaseUrl}/surveys/${surveyId}`, {
+      const response = await fetch(`${apiBaseUrl}/surveys/stats/${surveyId}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
       if (response.ok) {
-        const data = await response.json();
+        const data: SurveyStats = await response.json();
         setSelectedSurvey(data);
-        // data.problemSet_ids.forEach((id: string) => {
-        //   if (!problemSets[id]) {
-        //     fetchProblemSetDetails(id);
-        //   }
-        // });
       }
     } catch (error) {
       console.error("Error fetching survey details:", error);
+    } finally {
+      setIsLoadingDetails(false);
     }
   };
 
@@ -147,25 +162,6 @@ export default function AdminSurveyManagement() {
     });
   };
 
-  // const fetchProblemSetDetails = async (id: string) => {
-  //   try {
-  //     const response = await fetch(`${apiBaseUrl}/problems/sets/${id}`, {
-  //       headers: {
-  //         Authorization: `Bearer ${accessToken}`,
-  //       },
-  //     });
-  //     if (response.ok) {
-  //       const data = await response.json();
-  //       setProblemSets((prev) => ({
-  //         ...prev,
-  //         [id]: data,
-  //       }));
-  //     }
-  //   } catch (error) {
-  //     console.error(`Error fetching problem set details for ${id}:`, error);
-  //   }
-  // };
-  //
   const InfoPopup = ({
     show,
     onClose,
@@ -197,6 +193,45 @@ export default function AdminSurveyManagement() {
           </div>
         </div>
       </div>
+    );
+  };
+
+  const ParticipantStatsPieChart = ({
+    stats,
+  }: {
+    stats: SurveyStats["participantStats"];
+  }) => {
+    const data = [
+      { name: "Not Started", value: stats.notStarted },
+      { name: "In Progress", value: stats.inProgress },
+      { name: "Finished", value: stats.finished },
+    ];
+
+    const COLORS = ["#0088FE", "#00C49F", "#FFBB28"];
+
+    return (
+      <ResponsiveContainer width="100%" height={300}>
+        <PieChart>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            labelLine={false}
+            outerRadius={80}
+            fill="#8884d8"
+            dataKey="value"
+          >
+            {data.map((entry, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={COLORS[index % COLORS.length]}
+              />
+            ))}
+          </Pie>
+          <Tooltip />
+          <Legend />
+        </PieChart>
+      </ResponsiveContainer>
     );
   };
 
@@ -323,7 +358,7 @@ export default function AdminSurveyManagement() {
               <div className="mt-3">
                 <div className="flex justify-between items-start">
                   <h3 className="text-xl font-bold text-gray-900">
-                    {selectedSurvey.name}
+                    Survey Details
                   </h3>
                   <button
                     onClick={() => setSelectedSurvey(null)}
@@ -350,22 +385,54 @@ export default function AdminSurveyManagement() {
                       Problem Sets:
                     </h4>
                     <ul className="space-y-2">
-                      {selectedSurvey.problemSet_ids.map((id) => (
-                        <li key={id} className="text-sm text-gray-600">
-                          {id}
+                      {selectedSurvey.problemSetNames.map((name, index) => (
+                        <li key={index} className="text-sm text-gray-600">
+                          {name}
                         </li>
                       ))}
                     </ul>
                   </div>
-                  <div className="pt-4 border-t border-gray-200">
-                    <p className="text-sm text-gray-600">
-                      Created:{" "}
-                      {new Date(selectedSurvey.createdAt).toLocaleString()}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      Last Updated:{" "}
-                      {new Date(selectedSurvey.updatedAt).toLocaleString()}
-                    </p>
+                  <div>
+                    <h4 className="font-medium text-gray-700 mb-2">
+                      Participant Statistics:
+                    </h4>
+                    <ParticipantStatsPieChart
+                      stats={selectedSurvey.participantStats}
+                    />
+                    <div className="mt-4 grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">
+                          Total Participants:
+                        </p>
+                        <p className="text-lg font-semibold text-gray-700">
+                          {selectedSurvey.participantStats.participantsCount}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">
+                          Not Started:
+                        </p>
+                        <p className="text-lg font-semibold text-gray-700">
+                          {selectedSurvey.participantStats.notStarted}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">
+                          In Progress:
+                        </p>
+                        <p className="text-lg font-semibold text-gray-700">
+                          {selectedSurvey.participantStats.inProgress}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">
+                          Finished:
+                        </p>
+                        <p className="text-lg font-semibold text-gray-700">
+                          {selectedSurvey.participantStats.finished}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
